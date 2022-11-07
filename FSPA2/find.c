@@ -1,4 +1,4 @@
-#include"find.h"
+//#include"find.h"
 #define MAX_LINES 1000
 #define MAX_LEN 1000
 
