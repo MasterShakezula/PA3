@@ -201,13 +201,13 @@ int main(int argc, char** argv)
 
 	
 	
-	if (!(input) && !(output)) { // txt to csv
+	if ((input) && (output)) { // txt to csv
 		while (fgets(line, MAX_LINE_LENGTH, stdin)) {
 			while (sscanf(line, "%[^\t]\t%[^\n]\n", cell, line) == 2)//(strchr(rest, ',')){
 			{
 				if (hexadecimal)
 				{																
-						strcpy(cell, normalizerHexo(cell));					
+					strcpy(cell, normalizerHexo(cell));					
 				} 
 				if (trunc)
 				{
@@ -226,7 +226,7 @@ int main(int argc, char** argv)
 		}
 		
 	}
-	else if ((input) && (output)) { // csv to txt
+	else if (!(input) && !(output)) { // csv to txt
 		while (fgets(line, MAX_LINE_LENGTH, stdin)) {
 			while (sscanf(line, "%[^,],%[^\n]\n", cell, line) == 2)//(strchr(rest, ',')){
 				printf("%s\t", cell);//internal cell followed by tab
