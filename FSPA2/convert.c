@@ -112,7 +112,6 @@ char* normalizerScientific(char* input) {
 		sprintf(output, "%s", input);
 	return output;
 }
-typedef enum { INT, DOUBLE, STRING } type;
 
 int main(int argc, char** argv)
 {
@@ -120,7 +119,7 @@ int main(int argc, char** argv)
 	char* line[MAX_LINE_LENGTH];
 	char* cell[MAX_CELL_LENGTH];
 	//char* rest;
-	int c;
+	int c; 
 	int hexadecimal, remove_white_space, scientific_notation, trunc = 0;
 	// x, c, e, s
 	int input, output = 0; //i, o
