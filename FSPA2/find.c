@@ -56,6 +56,39 @@ char* strcasestr_fully_matched(char* haystack, char* needle) {
 		return rv + 1;//needle is at the end.
 }
 
+
+
+char *normalizer(char *input) {
+	char output = (char)malloc(26);
+	double double_value;
+	int int_value;
+	type input_type = INT;
+	int i = 0;
+	if (input[0] == '-' || input[0] == '+')
+		i++;
+	for (; i < strlen(input); i++)
+		if (!isdigit(input[i])) {
+			input_type = DOUBLE;
+			break;
+		}
+	if (input_type == INT)
+		sscanf(input, "%d", &int_value);
+	else {
+		if (sscanf(input, "%lf", &double_value))
+			input_type = DOUBLE;
+		else
+			input_type = STRING;
+	}
+	if (input_type == INT)
+		sprintf(output, "%25x", int_value);
+	else if (input_type == DOUBLE)
+		sprintf(output, "%25e", double_value);
+	else
+		sprintf(output, "%25.5s", input);
+	return output;
+}
+typedef enum { INT, DOUBLE, STRING } type;
+
 int getline2(char s[], int lim){
 	int c, i;
 	
@@ -282,4 +315,8 @@ int main(int argc, char** argv)
 
 		return 0;
 	}
+
+
+
+
 }

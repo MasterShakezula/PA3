@@ -1,33 +1,4 @@
 
-//	}else{
-//		fprintf(stderr, "convert: fatal error! usage: -i in_ext -o out_ext\n");
-//		exit(1);
-//	}
-//	fprintf(stderr, "convert: in format is %s, out format is %s\n", in_ext, out_ext);
-//	if(!strcmp(in_ext, "csv") && !strcmp(out_ext, "txt")){
-//		while(fgets(line, MAX_LINE_LENGTH, stdin)){
-//			while(sscanf(line,"%[^,],%[^\n]\n",cell , line) == 2)//(strchr(rest, ',')){
-//				printf("%s\t", cell);//internal cell followed by tab
-//			printf("%s\n",cell);//last cell followed by new line
-//		}
-//	}else if(!strcmp(in_ext, "txt") && !strcmp(out_ext, "csv")){
-//		while(fgets(line, MAX_LINE_LENGTH, stdin)){
-//			while(sscanf(line,"%[^\t]\t%[^\n]\n",cell , line) == 2)//(strchr(rest, ',')){
-//				printf("%s,", cell);//internal cell followed by tab
-//			printf("%s\n",cell);//last cell followed by new line
-//		}
-//	}else if (!strcmp(in_ext, out_ext)){
-//		char c;
-//		while((c=getchar())!= EOF)
-//			putchar(c);
-//	}else{
-//		fprintf(stderr, "convert: fatal error! usage: -i in_ext -o out_ext and only supported extensions are csv and txt\n");
-//		exit(1);
-//	}
-//
-//
-//
-//}
 
 
 #define MAX_LINES 1000
@@ -39,6 +10,24 @@
 #include<ctype.h>
 #define MAX_LINE_LENGTH 1000
 #define MAX_CELL_LENGTH 20
+typedef enum { INT, DOUBLE, STRING } type;
+
+char* normalizerInt(char* input) {
+	char* output = (char*)malloc(26);
+	double double_value;
+	int int_value;
+	type input_type = INT;
+	int i = 0;
+	
+	if (input_type == INT)
+		sscanf(input, "%d", &int_value);
+	
+	if (input_type == INT)
+		sprintf(output, "%25x", int_value);
+	
+	
+	return output;
+}
 
 char* lineptr[MAX_LINES];
 
@@ -136,8 +125,8 @@ int readlines(char** lineptr, int maxlines) {
 int main(int argc, char** argv)
 {
 	
-	char line[MAX_LINE_LENGTH];
-	char cell[MAX_CELL_LENGTH];
+	char* line[MAX_LINE_LENGTH];
+	char* cell[MAX_CELL_LENGTH];
 	//char* rest;
 	int c;
 	int hexadecimal, remove_white_space, scientific_notation, non_numerical_trunc = 0;
@@ -216,23 +205,32 @@ int main(int argc, char** argv)
 			}
 		}
 	}
-	/*if (argc != 1)
-		printf("Usage: find pattern\n");*/
+	
+
+
 	
 	
-		/*fprintf(stderr, "convert: fatal error! usage: -i in_ext -o out_ext\n");
-		exit(1);*/
-	
-	
-	if (!(input) && !(output)) {
+	if (!(input) && !(output)) { // txt to csv
 		while (fgets(line, MAX_LINE_LENGTH, stdin)) {
 			while (sscanf(line, "%[^\t]\t%[^\n]\n", cell, line) == 2)//(strchr(rest, ',')){
+			{
+				if (hexadecimal)
+				{
+					if (isdigit(cell))
+					{
+						cell = normalizerInt(cell);
+
+					}
+
+				} // this whole body is experimental
 				printf("%s,", cell);//internal cell followed by tab
+			}
+				
 			printf("%s\n", cell);//last cell followed by new line
 		}
 		
 	}
-	else if ((input) && (output)) {
+	else if ((input) && (output)) { // csv to txt
 		while (fgets(line, MAX_LINE_LENGTH, stdin)) {
 			while (sscanf(line, "%[^,],%[^\n]\n", cell, line) == 2)//(strchr(rest, ',')){
 				printf("%s\t", cell);//internal cell followed by tab
@@ -240,7 +238,7 @@ int main(int argc, char** argv)
 		}
 		
 	}
-	else  {
+	else  { // if both are the same file format, txt and txt or csv and csv
 		char c;
 		while ((c = getchar()) != EOF)
 			putchar(c);
