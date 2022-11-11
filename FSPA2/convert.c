@@ -148,6 +148,7 @@ int main(int argc, char** argv)
 			{
 				
 				char* input_format = *++argv;
+				printf("Input Format: %s\n", input_format);
 				if (strcmp(input_format, "txt") == 0)
 				{
 					argc -= 2;
@@ -197,13 +198,20 @@ int main(int argc, char** argv)
 		}
 	}
 	
-	
+	if (argc == -2)
+		printf("Usage: convert pattern\n");
+
 
 	
 	
 	if ((input) && (output)) { // txt to csv
 		while (fgets(line, MAX_LINE_LENGTH, stdin)) {
-			while (sscanf(line, "%[^\t]\t%[^\n]\n", cell, line) == 2)//(strchr(rest, ',')){
+			
+			strcpy(cell, "");
+			char tabs[100];
+			strcpy(tabs, "");
+
+			while (sscanf(line, "%[^\t]\t%[^\n]\n", tabs, line) == 2 || sscanf(line, "%[^\t\n]%[\t]%[^\n]\n", cell, tabs, line) == 3)
 			{
 				if (hexadecimal)
 				{																
@@ -217,30 +225,82 @@ int main(int argc, char** argv)
 				{
 					strcpy(cell, normalizerTrunc(cell));
 				}
-				// copy all of this for csv to txt
-				//if (remove_white_space)
-				printf("%s,", cell);//internal cell followed by tab
+				printf("%s,", cell);
+
+				
+				printf("%s,", cell);
+				
+
+				if (strcmp(tabs, "\t") != 0) 
+				{
+					while (sscanf(line, "\t%[\t]", tabs) > 0) 
+					{
+						printf(",");
+					}					
+				}
+			}
+			
+
+			
+
+			if (trunc)
+			{
+				strcpy(cell, trunc(cell));
 			}
 				
-			printf("%s\n", cell);//last cell followed by new line
+			if (scientific_notation)
+			{
+				strcpy(cell, scientific_notation(cell));
+			}
+				
+			if (hexadecimal)
+			{
+				strcpy(cell, hexadecimal(cell));
+			}
+				
+				
+			printf("%s\n", cell);
+
 		}
 		
 	}
 	else if (!(input) && !(output)) { // csv to txt
 		while (fgets(line, MAX_LINE_LENGTH, stdin)) {
-			while (sscanf(line, "%[^,],%[^\n]\n", cell, line) == 2)//(strchr(rest, ',')){
-				printf("%s\t", cell);//internal cell followed by tab
-			printf("%s\n", cell);//last cell followed by new line
+			char commas[100];
+			strcpy(cell, "");
+			strcpy(commas, "");
+
+
+			while (sscanf(line, "%[^,],%[^\n]\n", commas, line) == 2 || sscanf(line, "%[^,\n]%[,]%[^\n]\n", cell, commas, line) == 3)
+			{
+				if (hexadecimal) strcpy(cell, hexadecimal(cell));
+				if (trunc) strcpy(cell, trunc(cell));
+				if (scientific_notation)strcpy(cell, scientific_notation(cell));														
+									
+				printf("%s\t", cell);
+
+				if (strcmp(commas, ",") != 0) 
+				{
+					while (sscanf(line, ",%[,]", commas) > 0) 
+					{
+						printf("\t");
+					}
+
+					printf("\t");
+				}
+			}
+			if (trunc)strcpy(cell, trunc(cell));
+			if (hexadecimal)strcpy(cell, hexadecimal(cell));
+			if (scientific_notation)strcpy(cell, scientific_notation(cell));											
+														
+			printf("%s\n", cell);
 		}
 		
 	}
 	else  { // if both are the same file format, txt and txt or csv and csv
+		printf("Input and output are equivalent");
 		char c;
 		while ((c = getchar()) != EOF)
 			putchar(c);
-	}
-	
-
-
-	
+	}		
 }
