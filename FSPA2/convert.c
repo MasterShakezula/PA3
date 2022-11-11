@@ -12,115 +12,107 @@
 #define MAX_CELL_LENGTH 20
 typedef enum { INT, DOUBLE, STRING } type;
 
-char* normalizerInt(char* input) {
-	char* output = (char*)malloc(26);
-	double double_value;
-	int int_value;
-	type input_type = INT;
-	int i = 0;
-	
-	if (input_type == INT)
-		sscanf(input, "%d", &int_value);
-	
-	if (input_type == INT)
-		sprintf(output, "%25x", int_value);
-	
-	
-	return output;
-}
+
 
 char* lineptr[MAX_LINES];
 
 int results[MAX_LINES];
 
-char* strstr_fully_matched(char* haystack, char* needle) {
-	char* rv;
 
-	char padded_needle[strlen(needle) + 3];
-
-	padded_needle[0] = ' ';
-
-	strcpy(padded_needle + 1, needle);
-
-	padded_needle[strlen(needle) + 1] = ' ';
-
-	padded_needle[strlen(needle) + 2] = '\0';
-
-	if (!strncmp(haystack, padded_needle + 1, strlen(needle) + 1))
-		return haystack;//needle is at the beginning
-
-	if ((rv = strstr(haystack, padded_needle)) != NULL)
-		return rv + 1;//needle is at the middle.
-
-	padded_needle[strlen(needle) + 1] = '\0';
-
-	if ((rv = strstr(haystack, padded_needle)) != NULL)
-		return rv + 1;//needle is at the end.
-}
-
-char* strcasestr_fully_matched(char* haystack, char* needle) {
-	char* rv;
-
-	char padded_needle[strlen(needle) + 3];
-
-	padded_needle[0] = ' ';
-
-	strcpy(padded_needle + 1, needle);
-
-	padded_needle[strlen(needle) + 1] = ' ';
-
-	padded_needle[strlen(needle) + 2] = '\0';
-
-	if (!strncasecmp(haystack, padded_needle + 1, strlen(needle) + 1))
-		return haystack;//needle is at the beginning
-
-	if ((rv = strcasestr(haystack, padded_needle)) != NULL)
-		return rv + 1;//needle is at the middle.
-
-	padded_needle[strlen(needle) + 1] = '\0';
-
-	if ((rv = strcasestr(haystack, padded_needle)) != NULL)
-		return rv + 1;//needle is at the end.
-}
-
-int getline2(char s[], int lim) {
-	int c, i;
-
-	for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; i++)
-		s[i] = c;
-
-	if (c == '\n') {
-		s[i] = c;
-
+char* normalizerHexo(char* input) {
+	char output = (char)malloc(26);
+	double double_value;
+	int int_value;
+	type input_type = INT;
+	int i = 0;
+	if (input[0] == '-' || input[0] == '+')
 		i++;
-	}
-
-	s[i] = '\0';
-
-	return i;
-}
-
-int readlines(char** lineptr, int maxlines) {
-	int len, nlines;
-
-	char* p, line[MAX_LEN];
-
-	nlines = 0;
-
-	while ((len = getline2(line, MAX_LEN)) > 0)
-		if (nlines >= maxlines || (p = malloc(len)) == NULL)
-			return -1;
-
-		else {
-			if (line[len - 1] == '\n')
-				line[len - 1] = '\0';
-
-			strcpy(p, line);
-
-			lineptr[nlines++] = p;
+	for (; i < strlen(input); i++)
+		if (!isdigit(input[i])) {
+			input_type = DOUBLE;
+			break;
 		}
-	return nlines;
+	if (input_type == INT)
+		sscanf(input, "%d", &int_value);
+	else {
+		if (sscanf(input, "%lf", &double_value))
+			input_type = DOUBLE;
+		else
+			input_type = STRING;
+	}
+	if (input_type == INT)
+		sprintf(output, "%25x", int_value);
+	else if (input_type == DOUBLE)
+		sprintf(output, "%lf", double_value);
+	else
+		sprintf(output, "%s", input);
+	return output;
 }
+
+
+char* normalizerTrunc(char* input) {
+	char output = (char)malloc(26);
+	double double_value;
+	int int_value;
+	type input_type = INT;
+	int i = 0;
+	if (input[0] == '-' || input[0] == '+')
+		i++;
+	for (; i < strlen(input); i++)
+		if (!isdigit(input[i])) {
+			input_type = DOUBLE;
+			break;
+		}
+	if (input_type == INT)
+		sscanf(input, "%d", &int_value);
+	else {
+		if (sscanf(input, "%lf", &double_value))
+			input_type = DOUBLE;
+		else
+			input_type = STRING;
+	}
+	if (input_type == INT)
+		sprintf(output, "%d", int_value);
+	else if (input_type == DOUBLE)
+		sprintf(output, "%lf", double_value);
+	else
+		sprintf(output, "%25.5s", input);
+	return output;
+}
+
+
+
+
+char* normalizerScientific(char* input) {
+	char output = (char)malloc(26);
+	double double_value;
+	int int_value;
+	type input_type = INT;
+	int i = 0;
+	if (input[0] == '-' || input[0] == '+')
+		i++;
+	for (; i < strlen(input); i++)
+		if (!isdigit(input[i])) {
+			input_type = DOUBLE;
+			break;
+		}
+	if (input_type == INT)
+		sscanf(input, "%d", &int_value);
+	else {
+		if (sscanf(input, "%lf", &double_value))
+			input_type = DOUBLE;
+		else
+			input_type = STRING;
+	}
+	if (input_type == INT)
+		sprintf(output, "%d", int_value);
+	else if (input_type == DOUBLE)
+		sprintf(output, "%25e", double_value);
+	else
+		sprintf(output, "%s", input);
+	return output;
+}
+typedef enum { INT, DOUBLE, STRING } type;
 
 int main(int argc, char** argv)
 {
@@ -129,7 +121,7 @@ int main(int argc, char** argv)
 	char* cell[MAX_CELL_LENGTH];
 	//char* rest;
 	int c;
-	int hexadecimal, remove_white_space, scientific_notation, non_numerical_trunc = 0;
+	int hexadecimal, remove_white_space, scientific_notation, trunc = 0;
 	// x, c, e, s
 	int input, output = 0; //i, o
 
@@ -150,12 +142,12 @@ int main(int argc, char** argv)
 				scientific_notation = 1;
 				break;
 			case 's':				
-				non_numerical_trunc = 1;
+				trunc = 1;
 				break;
 				
 			case 'i':
 			{
-				printf("peepee");
+				
 				char* input_format = *++argv;
 				if (strcmp(input_format, "txt") == 0)
 				{
@@ -206,7 +198,7 @@ int main(int argc, char** argv)
 		}
 	}
 	
-
+	
 
 	
 	
@@ -215,14 +207,19 @@ int main(int argc, char** argv)
 			while (sscanf(line, "%[^\t]\t%[^\n]\n", cell, line) == 2)//(strchr(rest, ',')){
 			{
 				if (hexadecimal)
+				{																
+						strcpy(cell, normalizerHexo(cell));					
+				} 
+				if (trunc)
 				{
-					if (isdigit(cell))
-					{
-						cell = normalizerInt(cell);
-
-					}
-
-				} // this whole body is experimental
+					strcpy(cell, normalizerTrunc(cell));
+				}
+				if (scientific_notation)
+				{
+					strcpy(cell, normalizerTrunc(cell));
+				}
+				// copy all of this for csv to txt
+				//if (remove_white_space)
 				printf("%s,", cell);//internal cell followed by tab
 			}
 				
